@@ -27,10 +27,10 @@ always_ff @ (posedge clk_reg or negedge rst)
 begin
 	if(~rst)
 	begin
-		foreach(registers[i])
-		begin
-			registers[i] <= 0;
-		end
+		registers[0] <= 16'hC4F3;
+		registers[1] <= 16'hB45E;
+		registers[2] <= 16'hD1E5;
+		registers[3] <= 16'h1DE4;
 	end
 	else
 	begin
