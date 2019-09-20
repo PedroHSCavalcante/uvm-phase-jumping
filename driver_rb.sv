@@ -7,6 +7,8 @@ class driver_rb extends uvm_driver #(transaction_rb);
     transaction_rb tr;
     bit item_done;
 
+    event reset_driver;
+
     function new(string name = "driver_rb", uvm_component parent = null);
         super.new(name, parent);
     endfunction
@@ -17,8 +19,13 @@ class driver_rb extends uvm_driver #(transaction_rb);
             `uvm_fatal("NOVIF", "failed to get virtual interface")
         end
     endfunction
+    
+    task reset_phase(uvm_phase phase);
+        item_done = 1'b0;
+        tr = null;
+    endtask : reset_phase
 
-    task run_phase (uvm_phase phase);
+    task main_phase (uvm_phase phase);
 
         forever begin
             @(posedge vif.clk) begin

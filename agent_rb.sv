@@ -26,4 +26,8 @@ class agent_rb extends uvm_agent;
         mon.req_port.connect(agt_req_port);
         drv.seq_item_port.connect(sqr.seq_item_export);
     endfunction
+
+    task pre_reset_phase(uvm_phase phase);
+        sqr.stop_sequences();
+    endtask : pre_reset_phase
 endclass: agent_rb

@@ -7,6 +7,8 @@ class driver extends uvm_driver #(transaction_in);
     transaction_in tr;
     bit item_done, first_tr;
 
+    event reset_driver;
+
     function new(string name = "driver", uvm_component parent = null);
         super.new(name, parent);
     endfunction
@@ -18,7 +20,12 @@ class driver extends uvm_driver #(transaction_in);
         end
     endfunction
 
-    task run_phase (uvm_phase phase);
+    task reset_phase(uvm_phase phase);
+         item_done = 1'b0;
+         tr = null;
+    endtask : reset_phase
+
+    task main_phase (uvm_phase phase);
 
         forever begin
             @(posedge vif.clk) begin

@@ -12,6 +12,12 @@ module top;
     rst = 1;
     #20 rst = 0;
     #20 rst = 1;
+    #1000 rst = 0;
+    #20 rst = 1;
+    #500 rst = 0;
+    #20 rst = 1;
+    #2000 rst = 0;
+    #20 rst = 1;
   end
 
   always #1 clk = !clk;

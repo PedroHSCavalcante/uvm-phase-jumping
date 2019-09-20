@@ -22,7 +22,6 @@ class coverage extends uvm_component;
   endfunction
 
   task run_phase(uvm_phase phase);
-    phase.raise_objection(this);
     @(end_of_simulation);
     phase.drop_objection(this);
   endtask: run_phase

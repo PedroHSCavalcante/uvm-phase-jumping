@@ -29,4 +29,10 @@ class agent extends uvm_agent;
         mon.resp_port.connect(agt_resp_port);
         drv.seq_item_port.connect(sqr.seq_item_export);
     endfunction
+
+    task pre_reset_phase(uvm_phase phase);
+        if(drv && sqr) begin
+            sqr.stop_sequences();
+        end
+    endtask : pre_reset_phase
 endclass: agent

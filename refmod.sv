@@ -6,7 +6,7 @@ import "DPI-C" context function int my_ula(int x,int y,int z);
 class refmod extends uvm_component;
     `uvm_component_utils(refmod)
 
-    bit [15:0] register[4];
+    bit [15:0] registers[4];
     
     transaction_in tr_in;
     transaction_out tr_out;
@@ -29,16 +29,25 @@ class refmod extends uvm_component;
         super.build_phase(phase);
         tr_out = transaction_out::type_id::create("tr_out", this);
     endfunction: build_phase
-    
-    virtual task run_phase(uvm_phase phase);
-        super.run_phase(phase);
+
+    task reset_phase(uvm_phase phase);
+        phase.raise_objection(this);
+        registers[0] = 16'hC4F3;
+        registers[1] = 16'hB45E;
+        registers[2] = 16'hD1E5;
+        registers[3] = 16'h1DE4;
+        phase.drop_objection(this);
+    endtask : reset_phase
+
+    virtual task main_phase(uvm_phase phase);
+        super.main_phase(phase);
         forever begin
             @begin_refmodtask;
             tr_out = transaction_out::type_id::create("tr_out", this);
-            tr_out.data_o = my_ula(tr_in.data_i,register[tr_in.reg_sel],tr_in.instru);
+            tr_out.data_o = my_ula(tr_in.data_i,registers[tr_in.reg_sel],tr_in.instru);
             out.write(tr_out);
         end
-    endtask: run_phase
+    endtask: main_phase
 
     virtual function write_ula (transaction_in t);
         tr_in = transaction_in#()::type_id::create("tr_in", this);
@@ -47,7 +56,7 @@ class refmod extends uvm_component;
     endfunction
 
     virtual function write_rb (transaction_rb t);
-        register[t.addr] = t.data_i;
+        registers[t.addr] = t.data_i;
     endfunction
 
 endclass: refmod
