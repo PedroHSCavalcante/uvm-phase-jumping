@@ -33,34 +33,33 @@ class driver extends uvm_driver #(transaction_in);
     endtask : reset_phase
 
     task main_phase (uvm_phase phase);
-        fork
-            forever begin
-                @(posedge vif.clk) begin
 
-                    item_done = 1'b0;
-                    vif.valid_i = 1'b0;
-                    if(tr && (vif.valid_o || first_tr)) begin
-                        $display("data_i = ",tr.data_i);
-                        $display("reg_sel = ",tr.reg_sel);
-                        $display("instru = ",tr.instru);
-                        vif.data_i  <= tr.data_i;
-                        vif.reg_sel <= tr.reg_sel;
-                        vif.instru  <= tr.instru;
-                        vif.valid_i <= 1'b1;
-                        item_done = 1;
-                        first_tr = 0;
-                    end
-      
-                    if (item_done) begin
-                        `uvm_info("ITEM_DONE", $sformatf("Item done. = %b",item_done), UVM_LOW);
-                        seq_item_port.item_done();
-                    end
+        forever begin
+            @(posedge vif.clk) begin
 
-                    if (item_done || !tr) begin
-                      seq_item_port.try_next_item(tr);
-                    end
+                item_done = 1'b0;
+                vif.valid_i = 1'b0;
+                if(tr && (vif.valid_o || first_tr)) begin
+                    $display("data_i = ",tr.data_i);
+                    $display("reg_sel = ",tr.reg_sel);
+                    $display("instru = ",tr.instru);
+                    vif.data_i  <= tr.data_i;
+                    vif.reg_sel <= tr.reg_sel;
+                    vif.instru  <= tr.instru;
+                    vif.valid_i <= 1'b1;
+                    item_done = 1;
+                    first_tr = 0;
+                end
+  
+                if (item_done) begin
+                    `uvm_info("ITEM_DONE", $sformatf("Item done. = %b",item_done), UVM_LOW);
+                    seq_item_port.item_done();
+                end
+
+                if (item_done || !tr) begin
+                  seq_item_port.try_next_item(tr);
                 end
             end
-        join
+        end
     endtask
 endclass
