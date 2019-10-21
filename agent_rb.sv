@@ -28,6 +28,8 @@ class agent_rb extends uvm_agent;
     endfunction
 
     task pre_reset_phase(uvm_phase phase);
+        phase.raise_objection(this);
         sqr.stop_sequences();
+        phase.drop_objection(this);
     endtask : pre_reset_phase
 endclass: agent_rb

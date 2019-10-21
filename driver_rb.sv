@@ -19,8 +19,13 @@ class driver_rb extends uvm_driver #(transaction_rb);
     endfunction
     
     task reset_phase(uvm_phase phase);
-        item_done = 1'b0;
-        tr = null;
+      phase.raise_objection(this);
+      item_done = 1'b0;
+      vif.data_i  <= '0;
+      vif.addr    <= '0;
+      vif.valid_i <= '0;
+      tr = null;
+      phase.drop_objection(this);
     endtask : reset_phase
 
     task main_phase (uvm_phase phase);
@@ -31,25 +36,15 @@ class driver_rb extends uvm_driver #(transaction_rb);
                     item_done = 1'b0;
                     vif.valid_i = 1'b0;
 
-                    if(vif.rst) begin
-                        repeat(10) @(posedge vif.clk);
-                    end
+                    repeat(10) @(posedge vif.clk);
 
-                    if(!vif.rst) begin
-                        vif.data_i  <= '0;
-                        vif.addr    <= '0;
-                        vif.valid_i <= '0;
-                        item_done = 0;
-                    end
-                    else begin
-                        if(tr)begin
-                            $display("data_i = ",tr.data_i);
-                            $display("addr = ",tr.addr);
-                            vif.data_i  <= tr.data_i;
-                            vif.addr <= tr.addr;
-                            vif.valid_i <= 1'b1;
-                            item_done = 1;
-                        end
+                    if(tr)begin
+                        $display("data_i = ",tr.data_i);
+                        $display("addr = ",tr.addr);
+                        vif.data_i  <= tr.data_i;
+                        vif.addr <= tr.addr;
+                        vif.valid_i <= 1'b1;
+                        item_done = 1;
                     end
 
                     if (item_done) begin

@@ -23,26 +23,24 @@ class simple_test extends uvm_test;
     phase.raise_objection(this);
     env_h.mst.mon.count_tr_reset = count_tr_reset;
     fork
-      seq_rb.start(env_h.mst_rb.sqr);
-      begin 
-        if (reset) begin 
-          repeat(3000) seq.start(env_h.mst.sqr);
-          phase.drop_objection(this);
+        seq_rb.start(env_h.mst_rb.sqr);
+        begin 
+            if (reset) begin 
+                repeat(3000) seq.start(env_h.mst.sqr);
+                phase.drop_objection(this);
+            end
+
+            if (!reset) begin 
+                repeat(count_tr_reset) seq.start(env_h.mst.sqr);
+                reset = 1;
+            end
         end
 
-        if (!reset) begin 
-          repeat(count_tr_reset) seq.start(env_h.mst.sqr);
-          reset = 1;
-        end
-      end
-      begin
-        @(negedge env_h.mst_rb.drv.vif.rst); //First reset no need jump
         forever begin
-          @(negedge env_h.mst_rb.drv.vif.rst);
-          phase.jump(uvm_pre_reset_phase::get());
+            @(negedge env_h.mst_rb.drv.vif.rst);
+            phase.jump(uvm_pre_reset_phase::get());
         end
-      end
     join
-  endtask: main_phase
+  endtask
 
 endclass
