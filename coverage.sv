@@ -5,33 +5,34 @@ class coverage extends uvm_component;
   transaction_in req;
   uvm_analysis_imp#(transaction_in, coverage) req_port;
 
-  int min_tr;
   int n_tr = 0;
 
   event end_of_simulation;
 
+  // covergroup cg();
+  //   //add your covergroup
+  // endgroup : cg
+
   function new(string name = "coverage", uvm_component parent= null);
     super.new(name, parent);
     req_port = new("req_port", this);
-    req=new;
-    min_tr = 10000;
+    req = new;
+    // cg = new;
   endfunction
 
   function void build_phase(uvm_phase phase);
     super.build_phase (phase);
   endfunction
 
-  task run_phase(uvm_phase phase);
-    @(end_of_simulation);
-    phase.drop_objection(this);
-  endtask: run_phase
-
+  task main_phase(uvm_phase phase);
+    // phase.raise_objection(this);
+  endtask: main_phase
   
   function void write(transaction_in t);
-    n_tr = n_tr + 1;
-    if(n_tr >= min_tr)begin
-      ->end_of_simulation;
-    end
+    req.copy(t);
+    // cg.sample();
+    // if($get_coverage() == 100)
+    //   running_phase.drop_objection(this);
   endfunction: write
 
 endclass : coverage

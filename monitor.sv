@@ -1,4 +1,5 @@
 class monitor extends uvm_monitor;
+    `uvm_component_utils(monitor)
 
     interface_vif  vif;
     event begin_record, end_record;
@@ -6,7 +7,8 @@ class monitor extends uvm_monitor;
     transaction_out tr_out;
     uvm_analysis_port #(transaction_in) req_port;
     uvm_analysis_port #(transaction_out) resp_port;
-    `uvm_component_utils(monitor)
+    int count;
+    int count_tr_reset;
    
     function new(string name, uvm_component parent);
         super.new(name, parent);
@@ -48,6 +50,11 @@ class monitor extends uvm_monitor;
                     tr_out.data_o = vif.data_o;
                     resp_port.write(tr_out);
                     end_tr(tr_out);
+                    count++;
+                    if(count == count_tr_reset) begin
+                        uvm_config_db#(int)::set(uvm_root::get(), "*", "reset", 1);
+                        count = 0;
+                    end
                 end
             end
         end

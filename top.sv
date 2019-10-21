@@ -2,26 +2,27 @@
 module top;
   import uvm_pkg::*;
   import pkg::*;
+
   logic clk;
   logic clk_rb;
   logic rst;
+  int clk_delay = 1;
+  int reset_delay = $urandom_range(10,1); 
 
+  
   initial begin
     clk = 1;
     clk_rb = 1;
     rst = 1;
     #20 rst = 0;
     #20 rst = 1;
-    #1000 rst = 0;
-    #20 rst = 1;
-    #500 rst = 0;
-    #20 rst = 1;
-    #2000 rst = 0;
-    #20 rst = 1;
+    uvm_config_db#(int)::wait_modified(uvm_root::get(), "*", "reset");
+    rst = 0;
+    #(reset_delay*clk_delay*2) rst = 1;
   end
 
-  always #1 clk = !clk;
-  always #4 clk_rb = !clk_rb;
+  always #(clk_delay) clk = !clk;
+  always #(clk_delay*4) clk_rb = !clk_rb;
 
   interface_if dut_if(.clk(clk), .rst(rst));
   interface_rb rb_if(.clk(clk_rb), .rst(rst));
