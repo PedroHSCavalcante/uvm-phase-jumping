@@ -53,6 +53,8 @@ module top;
        set_config_int("*", "recording_detail", 1);
     `endif
 
+    uvm_top.set_report_id_verbosity_hier("PH_JUMP",UVM_LOW);
+
     uvm_config_db#(interface_vif)::set(uvm_root::get(), "*.env_h.mst.*", "vif", dut_if);
     uvm_config_db#(rb_vif)::set(uvm_root::get(), "*.env_h.mst_rb.*", "vif", rb_if);
 
